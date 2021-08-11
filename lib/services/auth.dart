@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mosq/models/masjid.dart';
 import 'package:mosq/models/user.dart' as ModelUser;
 
 class AuthService {
@@ -6,7 +7,17 @@ class AuthService {
 
   // Create user based on Firebase User
   ModelUser.User? _mapUser(User? user) {
-    return user == null ? null : ModelUser.User(user.uid);
+    if (user == null) {
+      return null;
+    }
+
+    ModelUser.User result = ModelUser.User(
+      id: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      phoneNumber: user.phoneNumber,
+    );
+    return result;
   }
 
   // Auth user stream change
@@ -14,21 +25,17 @@ class AuthService {
     return _auth.authStateChanges().map(_mapUser);
   }
 
-  // Sign In anon
-  Future<ModelUser.User?> signInAnon() async {
-    try {
-      UserCredential user = await _auth.signInAnonymously();
-      return _mapUser(user.user);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
   // Sign In with email pass
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return _mapUser(result.user);
+      if (result.user == null) {
+        return null;
+      } else {
+        var user = _mapUser(result.user) as ModelUser.User;
+        await user.loadMasjid();
+        return user;
+      }
     } on FirebaseAuthException catch(e) {
       final String? error;
       switch (e.code) {
@@ -58,7 +65,21 @@ class AuthService {
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      return _mapUser(result.user);
+      if (result.user == null) {
+        return null;
+      } else {
+
+        Masjid masjid = Masjid(nama: 'Masjid Agung Jami');
+        await masjid.save();
+
+        ModelUser.User user = _mapUser(result.user) as ModelUser.User;
+        user.masjidId = masjid.id;
+        await user.save();
+
+        user.masjid = masjid;
+
+        return user;
+      }
     } on FirebaseAuthException catch(e) {
       final String? error;
       switch(e.code) {

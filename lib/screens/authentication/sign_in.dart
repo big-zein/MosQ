@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mosq/libraries/validator.dart';
 import 'package:mosq/models/user.dart';
@@ -6,6 +5,7 @@ import 'package:mosq/services/auth.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
+
   SignIn({required this.toggleView});
 
   @override
@@ -29,10 +29,10 @@ class _SignInState extends State<SignIn> {
         elevation: 0.0,
         title: Text('Sign In to MosQ'),
         actions: [
-          TextButton.icon(
-              onPressed: () => widget.toggleView(),
-              icon: Icon(Icons.how_to_reg),
-              label: Text('Register')),
+          IconButton(
+            onPressed: () => widget.toggleView(),
+            icon: Icon(Icons.how_to_reg),
+          ),
         ],
       ),
       body: Container(
@@ -52,10 +52,10 @@ class _SignInState extends State<SignIn> {
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) => (Validator(
-                    attributeName: User.attributeName('email'),
-                    value: value)
-                  ..required()
-                  ..email())
+                        attributeName: User.attributeName('email'),
+                        value: value)
+                      ..required()
+                      ..email())
                     .getError(),
                 onFieldSubmitted: (value) => _formKey.currentState!.validate(),
               ),
@@ -65,15 +65,18 @@ class _SignInState extends State<SignIn> {
                 decoration: InputDecoration(
                     labelText: User.attributeName('password'),
                     suffixIcon: IconButton(
-                      icon: Icon(showPassword ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () => setState(() => showPassword = !showPassword),
+                      icon: Icon(showPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () =>
+                          setState(() => showPassword = !showPassword),
                     )),
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.visiblePassword,
                 validator: (value) => (Validator(
-                    attributeName: User.attributeName('password'),
-                    value: value)
-                  ..required())
+                        attributeName: User.attributeName('password'),
+                        value: value)
+                      ..required())
                     .getError(),
                 onFieldSubmitted: (value) => _formKey.currentState!.validate(),
               ),
@@ -86,7 +89,8 @@ class _SignInState extends State<SignIn> {
                     onPressed: () async {
                       if (!isLoading && _formKey.currentState!.validate()) {
                         setState(() => isLoading = true);
-                        var result = await _auth.signInWithEmailAndPassword(emailC.text, passwordC.text);
+                        var result = await _auth.signInWithEmailAndPassword(
+                            emailC.text, passwordC.text);
 
                         if (result is User) {
                           //done
@@ -95,26 +99,26 @@ class _SignInState extends State<SignIn> {
                             content: Text(result),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() => isLoading = false);
                         } else {
                           final snackBar = SnackBar(
                             content: Text('Try again later.'),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() => isLoading = false);
                         }
-
-                        setState(() => isLoading = false);
                       }
                     },
                     child: !isLoading
                         ? Text('Sign In')
                         : SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      ),
-                    )),
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )),
               ),
             ],
           ),

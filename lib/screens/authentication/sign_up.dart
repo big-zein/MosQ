@@ -1,4 +1,3 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:mosq/libraries/validator.dart';
 import 'package:mosq/models/user.dart';
@@ -30,10 +29,10 @@ class _SignUpState extends State<SignUp> {
         elevation: 0.0,
         title: Text('Register to MosQ'),
         actions: [
-          TextButton.icon(
-              onPressed: () => widget.toggleView(),
-              icon: Icon(Icons.login),
-              label: Text('Sign In')),
+          IconButton(
+            onPressed: () => widget.toggleView(),
+            icon: Icon(Icons.login),
+          ),
         ],
       ),
       body: Container(
@@ -67,8 +66,11 @@ class _SignUpState extends State<SignUp> {
                 decoration: InputDecoration(
                     labelText: User.attributeName('password'),
                     suffixIcon: IconButton(
-                      icon: Icon(showPassword ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () => setState(() => showPassword = !showPassword),
+                      icon: Icon(showPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () =>
+                          setState(() => showPassword = !showPassword),
                     )),
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.visiblePassword,
@@ -100,14 +102,14 @@ class _SignUpState extends State<SignUp> {
                             content: Text(result),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() => isLoading = false);
                         } else {
                           final snackBar = SnackBar(
                             content: Text('Try again later.'),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() => isLoading = false);
                         }
-
-                        setState(() => isLoading = false);
                       }
                     },
                     child: !isLoading

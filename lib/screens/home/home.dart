@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mosq/services/auth.dart';
 
 class Home extends StatelessWidget {
-  final AuthService _auth = AuthService();
+  final _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -12,27 +12,36 @@ class Home extends StatelessWidget {
         title: Text('MosQ'),
         backgroundColor: Colors.blue[400],
         actions: [
-          TextButton.icon(
-            onPressed: () async {
-              await _auth.signOut();
-            },
-            icon: Icon(Icons.person),
-            label: Text('Logout'),
-          )
+          IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text('Logout'),
+                          actions: [
+                            TextButton(
+                              child: Text('Batal'),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            TextButton(
+                              child: Text('Logout'),
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await _auth.signOut();
+                              },
+                            ),
+                          ],
+                        ));
+              },
+              icon: Icon(Icons.logout))
         ],
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Text('home'),
-            ElevatedButton(
-              onPressed: () async {
-                await _auth.signOut();
-              },
-              child: Text("Logout"),
-            ),
-          ],
-        ),
+      body: Container(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/inventaris/index');
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

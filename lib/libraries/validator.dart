@@ -18,6 +18,7 @@ class Validator {
 
   // Stop on first error occurence
   void _setDone(String error) {
+
     isDone = true;
     this.error = error;
   }
@@ -49,6 +50,35 @@ class Validator {
       if (value!.length > length) {
         _setDone('$attributeName cannot be more than $length characters');
       }
+    }
+  }
+  void integer() {
+    if (!isDone && value != null && value!.isNotEmpty) {
+      try {
+        int.parse(value.toString());
+      } catch(e) {
+        _setDone('$attributeName must be an integer');
+      }
+    }
+  }
+  void min(int min) {
+    if (!isDone && value != null && value!.isNotEmpty) {
+      try {
+        var num = double.parse(value.toString());
+        if (num < min) {
+          _setDone('$attributeName must be at least $min');
+        }
+      } catch(e) {}
+    }
+  }
+  void max(int max) {
+    if (!isDone && value != null && value!.isNotEmpty) {
+      try {
+        var num = double.parse(value.toString());
+        if (num > max) {
+          _setDone('$attributeName may not be greater than $max');
+        }
+      } catch(e) {}
     }
   }
 }

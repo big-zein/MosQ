@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mosq/models/user.dart';
+import 'package:mosq/screens/home/inventaris/create.dart';
+import 'package:mosq/screens/home/inventaris/edit.dart';
+import 'package:mosq/screens/home/inventaris/index.dart';
+import 'package:mosq/screens/home/inventaris/show.dart';
 import 'package:mosq/screens/wrapper.dart';
 import 'package:mosq/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +33,12 @@ class _AppState extends State<App> {
                 child: MaterialApp(
                   title: 'Flutter Demo',
                   home: Wrapper(),
+                  routes: {
+                    '/inventaris/index': (context) => InventarisIndex(),
+                    '/inventaris/create': (context) => InventarisCreate(),
+                    '/inventaris/edit': (context) => InventarisEdit(),
+                    '/inventaris/show': (context) => InventarisShow(),
+                  },
                 ));
           }
           return MaterialApp(
